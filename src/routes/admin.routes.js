@@ -11,7 +11,7 @@ const {
   logoutAdmin,
   getCurrentAdmin,
 } = require('../controllers/admin.controller');
-const { authenticate } = require('../middleware/auth');
+const { authenticateAdmin } = require('../middleware/auth');
 
 /**
  * @swagger
@@ -205,7 +205,7 @@ router.post('/logout', logoutAdmin);
  *       500:
  *         description: Server error
  */
-router.get('/me', authenticate, getCurrentAdmin);
+router.get('/me', authenticateAdmin, getCurrentAdmin);
 
 /**
  * @swagger
