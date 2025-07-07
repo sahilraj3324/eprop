@@ -29,8 +29,8 @@ exports.signupAdmin = async (req, res) => {
     // Set token in HTTP-only cookie
     res.cookie('adminToken', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      secure: true,
+      sameSite: 'none',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
@@ -86,8 +86,8 @@ exports.loginAdmin = async (req, res) => {
       // Set token in HTTP-only cookie
       res.cookie('adminToken', token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        secure: true,
+        sameSite: 'none',
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
 
@@ -256,8 +256,8 @@ exports.logoutAdmin = async (req, res) => {
     // Clear the admin token cookie
     res.clearCookie('adminToken', {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      secure: true,
+      sameSite: 'none',
     });
 
     res.json({
