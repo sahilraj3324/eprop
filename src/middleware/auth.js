@@ -34,6 +34,7 @@ const authenticate = async (req, res, next) => {
     req.user = decoded; // Add user info to request object
     next();
   } catch (error) {
+    console.error('Auth middleware - Error:', error);
     res.status(500).json({
       success: false,
       message: 'Token verification failed.',
