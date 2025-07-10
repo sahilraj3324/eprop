@@ -8,6 +8,7 @@ const propertyRoutes = require('./routes/property.routes');
 const itemRoutes = require('./routes/item.routes');
 const adminRoutes = require('./routes/admin.routes');
 const chatRoutes = require('./routes/chat.routes');
+const blogRoutes = require('./routes/blog.routes');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./docs/swagger');
 
@@ -55,6 +56,7 @@ app.use('/api/properties', propertyRoutes);
 app.use('/api/items', itemRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/blogs', blogRoutes);
 
 // Swagger documentation
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));

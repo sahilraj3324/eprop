@@ -3,7 +3,7 @@ const Property = require('../models/property.model');
 // Get all properties
 exports.getAllProperties = async (req, res) => {
   try {
-    const properties = await Property.find().populate('user', 'name phoneNumber');
+    const properties = await Property.find().populate('user', 'name phoneNumber').lean();
     res.json(properties);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -13,7 +13,7 @@ exports.getAllProperties = async (req, res) => {
 // Get property by ID
 exports.getPropertyById = async (req, res) => {
   try {
-    const property = await Property.findById(req.params.id).populate('user', 'name phoneNumber');
+    const property = await Property.findById(req.params.id).populate('user', 'name phoneNumber').lean();
     if (!property) {
       return res.status(404).json({ message: 'Property not found' });
     }
@@ -26,7 +26,7 @@ exports.getPropertyById = async (req, res) => {
 // Get properties by user ID
 exports.getPropertiesByUserId = async (req, res) => {
   try {
-    const properties = await Property.find({ user: req.params.userId }).populate('user', 'name phoneNumber');
+    const properties = await Property.find({ user: req.params.userId }).populate('user', 'name phoneNumber').lean();
     res.json(properties);
   } catch (error) {
     res.status(500).json({ message: error.message });
