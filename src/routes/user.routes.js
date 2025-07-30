@@ -10,6 +10,10 @@ const {
   updateUser,
   deleteUser,
   deleteAllUsers,
+  verifyUser,
+  verifyUserAadhar,
+  getUsersByType,
+  getVerifiedUsers,
 } = require('../controllers/user.controller');
 const { authenticate } = require('../middleware/auth');
 
@@ -45,6 +49,63 @@ router.get('/', getAllUsers);
  *         description: Unauthorized
  */
 router.get('/me', authenticate, getCurrentUser);
+
+/**
+ * @swagger
+ * /api/users/verified:
+ *   get:
+ *     summary: Get all verified users
+ *     tags: [Users]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Items per page
+ *     responses:
+ *       200:
+ *         description: List of verified users
+ */
+router.get('/verified', getVerifiedUsers);
+
+/**
+ * @swagger
+ * /api/users/type/{user_type}:
+ *   get:
+ *     summary: Get users by type
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: user_type
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum: [buyer, seller, agent, admin]
+ *         description: User type
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Items per page
+ *     responses:
+ *       200:
+ *         description: List of users by type
+ */
+router.get('/type/:user_type', getUsersByType);
 
 /**
  * @swagger
@@ -161,6 +222,48 @@ router.post('/', createUser);
  *     tags: [Users]
  */
 router.put('/:id', updateUser);
+
+/**
+ * @swagger
+ * /api/users/{id}/verify:
+ *   patch:
+ *     summary: Verify user account
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: User ID
+ *     responses:
+ *       200:
+ *         description: User verified successfully
+ *       404:
+ *         description: User not found
+ */
+router.patch('/:id/verify', verifyUser);
+
+/**
+ * @swagger
+ * /api/users/{id}/verify-aadhar:
+ *   patch:
+ *     summary: Verify user Aadhar
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: User ID
+ *     responses:
+ *       200:
+ *         description: User Aadhar verified successfully
+ *       404:
+ *         description: User not found
+ */
+router.patch('/:id/verify-aadhar', verifyUserAadhar);
 
 /**
  * @swagger

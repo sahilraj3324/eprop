@@ -22,6 +22,19 @@ const userSchema = new mongoose.Schema(
       enum: ['active', 'inactive'],
       default: 'active',
     },
+    user_type: {
+      type: String,
+      enum: ['buyer', 'seller', 'agent', 'admin'],
+      default: 'buyer',
+    },
+    is_verified: {
+      type: Boolean,
+      default: false,
+    },
+    is_aadhar_verified: {
+      type: Boolean,
+      default: false,
+    },
     profilePic: {
       type: String, // store image URL or path
     },

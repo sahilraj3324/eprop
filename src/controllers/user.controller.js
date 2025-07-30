@@ -27,7 +27,7 @@ exports.getUserById = async (req, res) => {
 // Create new user
 exports.createUser = async (req, res) => {
   try {
-    const { name, address, phoneNumber, status, profilePic, password } = req.body;
+    const { name, address, phoneNumber, status, user_type, is_verified, is_aadhar_verified, profilePic, password } = req.body;
 
     // Check if user already exists
     const userExists = await User.findOne({ phoneNumber });
@@ -35,13 +35,26 @@ exports.createUser = async (req, res) => {
       return res.status(400).json({ message: 'User already exists with this phone number' });
     }
 
-    const user = await User.create({ name, address, phoneNumber, status, profilePic, password });
+    const user = await User.create({ 
+      name, 
+      address, 
+      phoneNumber, 
+      status, 
+      user_type, 
+      is_verified, 
+      is_aadhar_verified, 
+      profilePic, 
+      password 
+    });
 
     res.status(201).json({
       _id: user._id,
       name: user.name,
       phoneNumber: user.phoneNumber,
       status: user.status,
+      user_type: user.user_type,
+      is_verified: user.is_verified,
+      is_aadhar_verified: user.is_aadhar_verified,
       profilePic: user.profilePic,
     });
   } catch (error) {
@@ -78,6 +91,9 @@ exports.loginUser = async (req, res) => {
           phoneNumber: user.phoneNumber,
           address: user.address,
           status: user.status,
+          user_type: user.user_type,
+          is_verified: user.is_verified,
+          is_aadhar_verified: user.is_aadhar_verified,
           profilePic: user.profilePic,
         },
       });
@@ -169,6 +185,131 @@ exports.getCurrentUser = async (req, res) => {
     res.status(500).json({
       success: false,
       message: error.message,
+    });
+  }
+};
+
+// Verify user account
+exports.verifyUser = async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { is_verified: true },
+      { new: true, runValidators: true }
+    ).select('-password');
+
+    if (!user) {
+      return res.status(404).json({ 
+        success: false,
+        message: 'User not found' 
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'User verified successfully',
+      user: user
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      success: false,
+      message: error.message 
+    });
+  }
+};
+
+// Verify user Aadhar
+exports.verifyUserAadhar = async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { is_aadhar_verified: true },
+      { new: true, runValidators: true }
+    ).select('-password');
+
+    if (!user) {
+      return res.status(404).json({ 
+        success: false,
+        message: 'User not found' 
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'User Aadhar verified successfully',
+      user: user
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      success: false,
+      message: error.message 
+    });
+  }
+};
+
+// Get users by type
+exports.getUsersByType = async (req, res) => {
+  try {
+    const { user_type } = req.params;
+    const { page = 1, limit = 10 } = req.query;
+    
+    const skip = (page - 1) * limit;
+    
+    const users = await User.find({ user_type })
+      .select('-password')
+      .skip(skip)
+      .limit(parseInt(limit))
+      .sort({ createdAt: -1 });
+
+    const total = await User.countDocuments({ user_type });
+    
+    res.json({
+      success: true,
+      data: users,
+      pagination: {
+        current_page: parseInt(page),
+        total_pages: Math.ceil(total / limit),
+        total_items: total,
+        items_per_page: parseInt(limit)
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      success: false,
+      message: error.message 
+    });
+  }
+};
+
+// Get verified users
+exports.getVerifiedUsers = async (req, res) => {
+  try {
+    const { page = 1, limit = 10 } = req.query;
+    
+    const skip = (page - 1) * limit;
+    
+    const users = await User.find({ is_verified: true })
+      .select('-password')
+      .skip(skip)
+      .limit(parseInt(limit))
+      .sort({ createdAt: -1 });
+
+    const total = await User.countDocuments({ is_verified: true });
+    
+    res.json({
+      success: true,
+      data: users,
+      pagination: {
+        current_page: parseInt(page),
+        total_pages: Math.ceil(total / limit),
+        total_items: total,
+        items_per_page: parseInt(limit)
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      success: false,
+      message: error.message 
     });
   }
 };
